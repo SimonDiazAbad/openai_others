@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {  
-      "start:images": "node -r ts-node/register --env-file=.env src/images/index.ts"
+      "start:images": "node -r ts-node/register --env-file=.env src/images/index.ts",
+      "start:audio": "node -r ts-node/register --env-file=.env src/audio/index.ts"
   },
   "keywords": [],
   "author": "",

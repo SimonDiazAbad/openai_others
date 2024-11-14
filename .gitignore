@@ -2,5 +2,5 @@
 node_modules
 dist
 outputs/*.png
-input/*.png
+outputs/*.mp3
 .DS_store
