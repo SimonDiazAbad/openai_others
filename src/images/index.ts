@@ -61,9 +61,40 @@ async function generateImageVariation(inputPath: string) {
   return response;
 }
 
-// const response = generateImage(
-//   "an orange cat with closed eyes wearing a hat",
-//   "b64_json"
-// );
+// this won't work unless we provide a mask
+async function editImage(inputPath: string, prompt: string) {
+  const response = await openai.images.edit({
+    image: createReadStream(path.join(__dirname, inputPath)),
+    prompt: prompt,
+    // mask
+    n: 1,
+    response_format: "b64_json",
+  });
 
-const response = generateImageVariation("../../input/test-image.png");
+  const storedImagesLength = readdirSync(
+    path.join(__dirname, "../../outputs")
+  ).length;
+  const image = response.data[0].b64_json!;
+  const filePath = path.join(
+    __dirname,
+    `../../outputs/image-${storedImagesLength}.png`
+  );
+
+  writeFileSync(filePath, Buffer.from(image, "base64"));
+
+  console.log(`Image saved to ${filePath}`);
+
+  return response;
+}
+
+const response = generateImage(
+  "an orange cat with closed eyes wearing a hat",
+  "b64_json"
+);
+
+// const response = generateImageVariation("../../input/test-image.png");
+
+// const response = editImage(
+//   "../../input/test-image.png",
+//   "make the cat look like a dog"
+// );
