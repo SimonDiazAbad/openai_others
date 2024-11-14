@@ -1,3 +1,5 @@
 .env
 node_modules
 dist
+outputs/*.png
+.DS_store
