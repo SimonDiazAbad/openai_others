@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import { ImageGenerateParams } from "openai/resources";
-import { writeFileSync, readdirSync } from "fs";
+import { writeFileSync, readdirSync, createReadStream } from "fs";
 import path from "path";
 
 const openai = new OpenAI();
@@ -38,7 +38,32 @@ async function generateImage(
   return response;
 }
 
-const response = generateImage(
-  "an orange cat with closed eyes wearing a hat",
-  "b64_json"
-);
+async function generateImageVariation(inputPath: string) {
+  const response = await openai.images.createVariation({
+    image: createReadStream(path.join(__dirname, inputPath)),
+    n: 1,
+    response_format: "b64_json",
+  });
+
+  const storedImagesLength = readdirSync(
+    path.join(__dirname, "../../outputs")
+  ).length;
+  const image = response.data[0].b64_json!;
+  const filePath = path.join(
+    __dirname,
+    `../../outputs/image-${storedImagesLength}.png`
+  );
+
+  writeFileSync(filePath, Buffer.from(image, "base64"));
+
+  console.log(`Image saved to ${filePath}`);
+
+  return response;
+}
+
+// const response = generateImage(
+//   "an orange cat with closed eyes wearing a hat",
+//   "b64_json"
+// );
+
+const response = generateImageVariation("../../input/test-image.png");
